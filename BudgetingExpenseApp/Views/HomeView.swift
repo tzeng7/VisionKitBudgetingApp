@@ -22,7 +22,6 @@ struct HomeView : View {
     @State var travel : Double = 0.0
     @State var misc : Double = 0.0
     @State var hasAppeared : Bool = false
-    @State var isActive : Bool = false
     
     var body : some View {
         NavigationStack(path: $path) {
@@ -31,7 +30,7 @@ struct HomeView : View {
                 .font(.system(size: 50))
                 .toolbar {
                     NavigationLink {
-                        ExpenseView(rootIsActive: $isActive)
+                        ExpenseView()
                     } label: {
                         Label("Moved to Expense View", systemImage: "plus")
                     }.isDetailLink(false)

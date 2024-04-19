@@ -9,6 +9,28 @@ import Foundation
 import SwiftUI
 import PhotosUI
 
+struct Entry {
+    var name: String
+    var price: Double
+    var date: Date
+    var category: Category
+    var image: UIImage?
+    
+    init(name: String = "", price: Double = 0.0, date: Date = Date(), category: Category = .rent, image: UIImage? = nil) {
+        self.name = name
+        self.price = price
+        self.date = date
+        self.category = category
+        self.image = image
+    }
+    
+    init(_ builder: (inout Entry) -> Void) {
+        self.init()
+        builder(&self)
+    }
+
+}
+
 //TODO: be able to edit entry view
 struct EntryView : View {
     
@@ -17,11 +39,7 @@ struct EntryView : View {
     @Environment(\.managedObjectContext) var viewContext
 //    @Environment(\.presentationMode) var presentationMode
     @State var isShowingForm : Bool
-    @State var name : String
-    @State var price : Double
-    @State var date : Date
-    @State var category : String = ""
-    @State var image : UIImage?
+    @State var entry: Entry = Entry()
     @State var entries : [Expense] = []
     
     var body : some View {
@@ -47,15 +65,13 @@ struct EntryView : View {
                 }, label: {
                     Text("Submit All Added Expenses")
                 })
-            }
-//                VStack {
 
-//                }
+            }
             }
         .navigationTitle("Expense Entry")
 
         .sheet(isPresented: $isShowingForm, content: {
-            Form(isShowingForm: $isShowingForm, expenseEntries: $entries, name: name, price: price, date: date, image: image)
+            Form(isShowingForm: $isShowingForm, expenseEntries: $entries, entry: $entry)
         })
     }
     
@@ -121,62 +137,72 @@ struct Form : View {
     @Binding var isShowingForm : Bool
 
     @Binding var expenseEntries : [Expense]
-    @State var name : String
-    @State var price : Double
-    @State var date : Date
-    @State var category: Category = .rent
-    @State var image : UIImage?
+    @Binding var entry: Entry
     @State private var photosPickerItem : PhotosPickerItem?
     @State var hasSelectedImage : Bool = false
+    @State var isShowingCamera: Bool = false
     
     var body : some View {
         List {
             Section(header: Text("Name")) {
-                TextField("Name", text: $name)
+                TextField("Name", text: $entry.name)
             }
             Section(header: Text("Price")) {
-                TextField("Price", value: $price, format: .number)
+                TextField("Price", value: $entry.price, format: .number)
             }
             Section (header: Text("Image")){
                 PhotosPicker(selection: $photosPickerItem) {
-                    if image == nil {
+                    if self.entry.image == nil {
                         Label("", systemImage: "paperclip")
                     } else {
-                        Image(uiImage: image!)
+                        Image(uiImage: self.entry.image!)
                             .resizable()
                             .frame(width: 100, height: 100)
                     }
                 }
             }
             Section(header: Text("Date")) {
-                DatePicker(selection: $date, displayedComponents: .date) {
+                DatePicker(selection: $entry.date, displayedComponents: .date) {
                     Text("Date")
                 }
             }
             Section(header: Text("Category")) {
-                Picker("Category", selection: $category) {
+                Picker("Category", selection: $entry.category) {
                     ForEach(Category.allCases, id: \.self) { cat in
                         Text(cat.rawValue)
                     }
                 }
             }
-        }.onChange(of: photosPickerItem) { _, _ in
+            Button(action: {
+                self.isShowingCamera.toggle()
+            }, label: {
+                Label("camera", systemImage: "camera")
+            })
+        }
+        .onChange(of: photosPickerItem) { _, _ in
             Task {
                 if let photosPickerItem,
                    let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
                     if let pickerImage = UIImage(data: data) {
-                        self.image = pickerImage
+                        self.entry.image = pickerImage
                     }
                 }
                 hasSelectedImage.toggle()
             }
         }
+        .fullScreenCover(isPresented: self.$isShowingCamera, onDismiss: {
+            self.isShowingCamera = false
+        }, content: {
+            CameraView(entry: $entry)
+                .ignoresSafeArea()
+        })
         Button(action: {
-            self.expenseEntries.append(Expense(name: name, price: price, date: date, category: category.rawValue, image: image!))
+            self.expenseEntries.append(Expense(name: entry.name, price: entry.price, date: entry.date, category: entry.category.rawValue, image: entry.image!))
             self.isShowingForm.toggle()
         }, label: {
             Text("Done")
         })
+        
     }
 }
 
