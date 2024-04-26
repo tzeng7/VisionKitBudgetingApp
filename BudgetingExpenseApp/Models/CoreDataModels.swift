@@ -14,7 +14,7 @@ extension Expense {
         item.price = price
         item.date = date
         item.name = name
-        item.category = category
+        item.category = category.rawValue
         item.id = id
         do {
             try context.save()

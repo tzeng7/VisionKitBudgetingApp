@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import PhotosUI
+import UIKit
 
 struct Entry {
     var name: String
@@ -28,7 +29,6 @@ struct Entry {
         self.init()
         builder(&self)
     }
-
 }
 
 //TODO: be able to edit entry view
@@ -37,10 +37,11 @@ struct EntryView : View {
 
     var screen : CGRect = UIScreen.main.bounds
     @Environment(\.managedObjectContext) var viewContext
-//    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
     @State var isShowingForm : Bool
-    @State var entry: Entry = Entry()
+    @State var entry: Expense = Expense()
     @State var entries : [Expense] = []
+    @Binding var refreshMain : Bool
     
     var body : some View {
         NavigationStack() {
@@ -61,7 +62,8 @@ struct EntryView : View {
                         entry.save(in: viewContext)
                     }
                     entries.removeAll()
-                        
+                    refreshMain.toggle()
+                    dismiss()
                 }, label: {
                     Text("Submit All Added Expenses")
                 })
@@ -74,10 +76,7 @@ struct EntryView : View {
             Form(isShowingForm: $isShowingForm, expenseEntries: $entries, entry: $entry)
         })
     }
-    
-    func addExpense(name: String, price: Double, category: String, image: UIImage, date: Date) {
-        entries.append(Expense(name: name, price: price, date: date, category: category, image: image))
-    }
+
 }
 
 
@@ -85,7 +84,7 @@ struct EntryView : View {
 struct EntrySection : View {
     @Binding var name : String
     @Binding var price : Double
-    @Binding var image : UIImage
+    @Binding var image : UIImage?
     @Binding var date : Date
     var body : some View {
         VStack {
@@ -110,7 +109,7 @@ struct EntryFirstRow : View {
 
 struct EntrySecondRow : View {
     @State var date : Date
-    @State var image : UIImage
+    @State var image : UIImage?
     @State private var photosPickerItem : PhotosPickerItem?
     @State var showingImage : Bool = false
     
@@ -122,13 +121,16 @@ struct EntrySecondRow : View {
             } label: {
                 Label("", systemImage: "paperclip")
             }
+            .disabled(image == nil)
             DatePicker(selection: $date, displayedComponents: .date) {
                 Text("")
             }.padding(.leading)
         }.sheet(isPresented: $showingImage, content: {
-            Image(uiImage: image)
-                .resizable()
-                .frame(width: 500, height: 500)
+            if let image = self.image {
+                Image(uiImage: image)
+                    .resizable()
+                    .frame(width: 500, height: 500)
+            }
         })
     }
 }
@@ -137,7 +139,7 @@ struct Form : View {
     @Binding var isShowingForm : Bool
 
     @Binding var expenseEntries : [Expense]
-    @Binding var entry: Entry
+    @Binding var entry: Expense
     @State private var photosPickerItem : PhotosPickerItem?
     @State var hasSelectedImage : Bool = false
     @State var isShowingCamera: Bool = false
@@ -176,7 +178,7 @@ struct Form : View {
             Button(action: {
                 self.isShowingCamera.toggle()
             }, label: {
-                Label("camera", systemImage: "camera")
+                Label("Scan Receipt", systemImage: "camera")
             })
         }
         .onChange(of: photosPickerItem) { _, _ in
@@ -197,12 +199,12 @@ struct Form : View {
                 .ignoresSafeArea()
         })
         Button(action: {
-            self.expenseEntries.append(Expense(name: entry.name, price: entry.price, date: entry.date, category: entry.category.rawValue, image: entry.image!))
+            self.expenseEntries.append(self.entry)
             self.isShowingForm.toggle()
+            self.entry = Expense()
         }, label: {
             Text("Done")
         })
-        
     }
 }
 

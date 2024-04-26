@@ -15,14 +15,9 @@ import SwiftUI
 struct MainView : View {
     @Environment(\.managedObjectContext) private var viewContext
 
-    @FetchRequest(sortDescriptors: [])
-    private var expenses : FetchedResults<ExpenseEntity>
-
-    
-//    @State var expenses : [Expense]
     var body : some View {
         TabView {
-            HomeView(expenses: expenses)
+            HomeView()
                 .tabItem {
                     Image(systemName: "house")
                     Text("Home")
@@ -38,10 +33,7 @@ struct MainView : View {
     }
     
     func addItem() {
-//        let expense = Expense(name: "first item", price: 30.00, date: Date(), category: "rent")
-//        expense.save(in: viewContext)
-//        let secondexpense = Expense(name: "first item", price: 30.00, date: Date(), category: "fooddrink")
-//        secondexpense.save(in: viewContext)
+        print("added item")
 
     }
 

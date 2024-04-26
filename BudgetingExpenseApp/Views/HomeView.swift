@@ -9,12 +9,15 @@ import Foundation
 import SwiftUI
 
 struct HomeView : View {
+    let helper = HelperMethods()
     
     @State var path : NavigationPath = NavigationPath()
     
     let screenWidth = UIScreen.main.bounds.size.width
     let screenHeight = UIScreen.main.bounds.size.height
-    @State var expenses : FetchedResults<ExpenseEntity>
+    @FetchRequest(sortDescriptors: [])
+    private var expenses : FetchedResults<ExpenseEntity>
+//    @State var expenses : FetchedResults<ExpenseEntity>
     @State var total : Double = 0.0
     @State var rent : Double = 0.0
     @State var foodAndDrink : Double = 0.0
@@ -30,7 +33,7 @@ struct HomeView : View {
                 .font(.system(size: 50))
                 .toolbar {
                     NavigationLink {
-                        ExpenseView()
+                        ExpenseView(refreshMain: $hasAppeared)
                     } label: {
                         Label("Moved to Expense View", systemImage: "plus")
                     }.isDetailLink(false)
@@ -38,7 +41,7 @@ struct HomeView : View {
             
             ZStack {
                 ProgressCircle(total: $total, rent: $rent, foodAndDrink: $foodAndDrink, utilities: $utilities, travel: $travel, misc: $misc)
-                Text("$\(total, specifier: "%.2f")")
+                Text("\(helper.getCurrency())\(total, specifier: "%.2f")")
                     .font(.system(size: 25))
                     .padding()
             }.position(x: screenWidth / 2, y: screenHeight / 4)
@@ -48,7 +51,7 @@ struct HomeView : View {
                     Text("Rent")
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .leading)
                         .padding(.leading, 20)
-                    Text("\(rent, specifier: "%.2f")")
+                    Text("\(helper.getCurrency())\(rent, specifier: "%.2f")")
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
                         .padding(.trailing, 20)
                 }
@@ -56,7 +59,7 @@ struct HomeView : View {
                     Text("Food & Drink")
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .leading)
                         .padding(.leading, 20)
-                    Text("\(foodAndDrink, specifier: "%.2f")")
+                    Text("\(helper.getCurrency())\(foodAndDrink, specifier: "%.2f")")
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
                         .padding(.trailing, 20)
                 }
@@ -64,7 +67,7 @@ struct HomeView : View {
                     Text("Utilities")
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .leading)
                         .padding(.leading, 20)
-                    Text("\(utilities, specifier: "%.2f")")
+                    Text("\(helper.getCurrency())\(utilities, specifier: "%.2f")")
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
                         .padding(.trailing, 20)
                 }
@@ -72,7 +75,7 @@ struct HomeView : View {
                     Text("Travel")
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .leading)
                         .padding(.leading, 20)
-                    Text("\(travel, specifier: "%.2f")")
+                    Text("\(helper.getCurrency())\(travel, specifier: "%.2f")")
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
                         .padding(.trailing, 20)
                 }
@@ -80,24 +83,24 @@ struct HomeView : View {
                     Text("Miscellaneous")
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .leading)
                         .padding(.leading, 20)
-                    Text("\(misc, specifier: "%.2f")")
+                    Text("\(helper.getCurrency())\(misc, specifier: "%.2f")")
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
                         .padding(.trailing, 20)
                 }
+                .onAppear {
+//                    if !hasAppeared {
+//                        hasAppeared.toggle()
+                        total = 0
+                        rent = 0
+                        foodAndDrink = 0
+                        utilities = 0
+                        travel = 0
+                        misc = 0
+                        getCategoryTotals()
+//                    }
+                }
             }.font(.system(size: 25))
                 .position(x: screenWidth/2 ,y: screenHeight/4 - 30)
-        }
-        .onAppear {
-            if !hasAppeared {
-                hasAppeared.toggle()
-                total = 0
-                rent = 0
-                foodAndDrink = 0
-                utilities = 0
-                travel = 0
-                misc = 0
-                getCategoryTotals()
-            }
         }
     }
     
@@ -133,7 +136,7 @@ struct HomeView : View {
             ZStack {
                 Circle()
                     .trim(from: 0.0, to: (misc/total))
-                    .stroke(AngularGradient(colors: [Color.white], center: .center, startAngle: .degrees(0), endAngle: .degrees(360)),style: StrokeStyle(lineWidth: 30, lineCap: .butt))                    .rotationEffect(.degrees(-90))
+                    .stroke(AngularGradient(colors: [Color.green], center: .center, startAngle: .degrees(0), endAngle: .degrees(360)),style: StrokeStyle(lineWidth: 30, lineCap: .butt))                    .rotationEffect(.degrees(-90))
                     .padding([.leading, .trailing], 50)
                 Circle()
                     .trim(from: 0.0, to: (rent/total))

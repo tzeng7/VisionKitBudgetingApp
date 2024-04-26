@@ -6,3 +6,9 @@
 //
 import SwiftUI
 
+struct HelperMethods {
+    let locale = Locale.current
+    func getCurrency() -> String {
+        return locale.currencySymbol!
+    }
+}

@@ -8,21 +8,26 @@
 import Foundation
 import UIKit
 
-struct Expense : Hashable{
+struct Expense : Hashable {
     var name : String
     var price : Double
     var date : Date
-    var category : String
-    var image : UIImage
+    var category : Category
+    var image : UIImage?
     var id: UUID
     
-    init(name: String, price: Double, date: Date, category: String, image: UIImage, id: UUID = UUID()) {
+    init(name: String = "", price: Double = 0.0, date: Date = Date(), category: Category = .rent, image: UIImage? = nil, id: UUID = UUID()) {
         self.name = name
         self.price = price
         self.date = date
         self.category = category
         self.image = image
         self.id = id
+    }
+    
+    init(_ builder: (inout Expense) -> Void) {
+        self.init()
+        builder(&self)
     }
 }
 
