@@ -41,6 +41,8 @@ struct ExpenseStatisticsView : View {
     
     @State private var expensesByDay : [Date : [ExpenseEntity]] = [:]
     
+    @State private var showingMap : Bool = false
+    
     var body: some View {
             List {
                 Section(header: Text("Filters")) {
@@ -73,11 +75,22 @@ struct ExpenseStatisticsView : View {
                         }
                     }
                 }
+                Section(header: Text("Map")) {
+                    Button {
+                        self.showingMap.toggle()
+                    } label: {
+                        Text("View Map")
+                    }
+
+                }
             }
             .onChange(of: dateFilter, updatePredicate)
             .onChange(of: category, updatePredicate)
             .onChange(of: self.expensesPredicate, updateExpenseGrouping)
             .onAppear(perform: updateExpenseGrouping)
+            .sheet(isPresented: $showingMap, content: {
+                MapView(expenses: Array(self.expenses))
+            })
     }
     
     private func updateExpenseGrouping() {

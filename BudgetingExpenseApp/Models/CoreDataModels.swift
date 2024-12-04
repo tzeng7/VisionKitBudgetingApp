@@ -16,6 +16,7 @@ extension Expense {
         item.name = name
         item.category = category.rawValue
         item.id = id
+        item.location = location
         do {
             try context.save()
         } catch {

@@ -17,6 +17,7 @@ struct ReceiptRecognitionResult {
     let title: String?
     let date: Date?
     let total: Double?
+    let address : String?
 }
 
 struct CameraView : UIViewControllerRepresentable {
@@ -64,6 +65,9 @@ struct CameraView : UIViewControllerRepresentable {
                     if let date = recognitionResult.date {
                         $0.date = date
                     }
+                    if let location = recognitionResult.address {
+                        $0.location = location
+                    }
                     $0.image = image
                 }
                 await controller.dismiss(animated: true)
@@ -73,6 +77,7 @@ struct CameraView : UIViewControllerRepresentable {
         
         func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
             print("Document recognition cancelled")
+            controller.dismiss(animated: true)
         }
         
         func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: any Error) {
@@ -143,18 +148,31 @@ struct CameraView : UIViewControllerRepresentable {
         private func convertLinesToReceiptRecognitionResult(lines: [[String]]) async -> ReceiptRecognitionResult {
             let title = lines[0].joined(separator: " - ")
             var date: Date? = nil
+            var address : String? = ""
             for lineComponents in lines {
                 let line = lineComponents.joined(separator: " ")
                 let dates = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.date.rawValue).matches(in: line, range: NSRange(location: 0, length: line.count))
                     .compactMap { $0.date }
+                
+                let addresses = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.address.rawValue).matches(in: line, range: NSRange(location: 0, length: line.count))
+                    .compactMap { $0.addressComponents }
+                print(addresses)
+                let toAdd = addresses?.first?.values.joined(separator: " ")
+                
+                address! += "\(toAdd ?? "")"
+                if toAdd != nil {
+                    address! += "\n"
+                }
+
                 date = dates?.first
                 if date != nil {
                     break
                 }
             }
+            
             let lineWithTotal = lines.first { $0.first?.lowercased().starts(with: "total") == true || $0.first?.lowercased().starts(with: "balance") == true }
             let totalAmount = await detectCurrency(totalLine: lineWithTotal ?? [])
-            return ReceiptRecognitionResult(title: title, date: date, total: totalAmount)
+            return ReceiptRecognitionResult(title: title, date: date, total: totalAmount, address: address)
         }
         
         private func detectCurrency(totalLine: [String]) async -> Double? {

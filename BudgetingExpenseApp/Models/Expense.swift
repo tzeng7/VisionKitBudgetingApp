@@ -15,14 +15,16 @@ struct Expense : Hashable {
     var category : Category
     var image : UIImage?
     var id: UUID
+    var location: String
     
-    init(name: String = "", price: Double = 0.0, date: Date = Date(), category: Category = .rent, image: UIImage? = nil, id: UUID = UUID()) {
+    init(name: String = "", price: Double = 0.0, date: Date = Date(), category: Category = .rent, image: UIImage? = nil, id: UUID = UUID(), location: String = "") {
         self.name = name
         self.price = price
         self.date = date
         self.category = category
         self.image = image
         self.id = id
+        self.location = location
     }
     
     init(_ builder: (inout Expense) -> Void) {

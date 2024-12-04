@@ -129,7 +129,8 @@ struct EntrySecondRow : View {
             if let image = self.image {
                 Image(uiImage: image)
                     .resizable()
-                    .frame(width: 500, height: 500)
+                    .aspectRatio(contentMode: .fit)
+
             }
         })
     }
@@ -159,7 +160,8 @@ struct Form : View {
                     } else {
                         Image(uiImage: self.entry.image!)
                             .resizable()
-                            .frame(width: 100, height: 100)
+                            .frame(width: 500, height: 500)
+                            .aspectRatio(contentMode: .fit)
                     }
                 }
             }
@@ -174,6 +176,9 @@ struct Form : View {
                         Text(cat.rawValue)
                     }
                 }
+            }
+            Section(header: Text("Location")) {
+                TextField("Location", text: $entry.location, axis: .vertical )
             }
             Button(action: {
                 self.isShowingCamera.toggle()

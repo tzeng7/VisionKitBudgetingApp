@@ -20,6 +20,7 @@
 		D23ADFAA2B89B95F00646E97 /* BudgetingExpenseAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23ADFA92B89B95F00646E97 /* BudgetingExpenseAppUITests.swift */; };
 		D23ADFAC2B89B95F00646E97 /* BudgetingExpenseAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23ADFAB2B89B95F00646E97 /* BudgetingExpenseAppUITestsLaunchTests.swift */; };
 		D23ADFBB2B89C8C300646E97 /* Expense.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23ADFBA2B89C8C300646E97 /* Expense.swift */; };
+		D26359032BDCB9F200872772 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D26359022BDCB9F200872772 /* MapView.swift */; };
 		D286E26C2B8EBE0E0097DA51 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D286E26B2B8EBE0E0097DA51 /* HomeView.swift */; };
 		D2BF276D2B92748300291428 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BF276C2B92748300291428 /* Category.swift */; };
 		D2BF27722B92EEF100291428 /* HelperMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BF27712B92EEF100291428 /* HelperMethods.swift */; };
@@ -64,6 +65,7 @@
 		D23ADFA92B89B95F00646E97 /* BudgetingExpenseAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetingExpenseAppUITests.swift; sourceTree = "<group>"; };
 		D23ADFAB2B89B95F00646E97 /* BudgetingExpenseAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetingExpenseAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D23ADFBA2B89C8C300646E97 /* Expense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expense.swift; sourceTree = "<group>"; };
+		D26359022BDCB9F200872772 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		D286E26B2B8EBE0E0097DA51 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		D2BF276C2B92748300291428 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		D2BF27712B92EEF100291428 /* HelperMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperMethods.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 				D2BF27772B933A2200291428 /* EntryView.swift */,
 				D2BF27792B933A2900291428 /* CameraView.swift */,
 				D22E04D32BB813F200749358 /* ExpenseStatisticsView.swift */,
+				D26359022BDCB9F200872772 /* MapView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -315,6 +318,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D23702FC2BB66C0000A2E994 /* CoreDataModels.swift in Sources */,
+				D26359032BDCB9F200872772 /* MapView.swift in Sources */,
 				D23ADFBB2B89C8C300646E97 /* Expense.swift in Sources */,
 				D22E04D42BB813F200749358 /* ExpenseStatisticsView.swift in Sources */,
 				D2BF27742B93062500291428 /* MainView.swift in Sources */,
